@@ -3,16 +3,77 @@ import numpy as np
 
 def driver():
 
-# use routines    
-    f = lambda x: x**3+x-4
-    a = 1
-    b = 4
+# use routines
 
-#    f = lambda x: np.sin(x)
-#    a = 0.1
-#    b = np.pi+0.1
+    # f = lambda x: x**3 - x**2
+    
+    # 1 a
+    # a = .5
+    # b = 2
+    # returns:
+    # the approximate root is 0.9999999701976776
+    # the error message reads: 0
+    # f(astar) = -2.9802320611338473e-08
+    # this works as normal
 
-    tol = 1e-7
+    # 1 b
+    # a = -1
+    # b = 0.5
+    # returns
+    # the approximate root is -1
+    # the error message reads: 1
+    # f(astar) = -2
+    # This cannot find the root at zero since it has multiplicity and the positivity doesn't change
+    
+    # 1 c
+    # a = -1
+    # b = 2
+    #returns
+    # the approximate root is 0.9999999701976776
+    # the error message reads: 0
+    # f(astar) = -2.9802320611338473e-08
+    # this finds the root at -1 since it can't do the zero root. The change in positivity works here
+
+
+
+    # 2
+    
+    tol = 1e-5
+    
+    #2 a
+    # f = lambda x: (x-1) * (x-3) * (x-5)
+    # a = 0
+    # b = 2.4
+    #returns:
+    #the approximate root is 1.0000030517578122
+    # the error message reads: 0
+    # f(astar) = 2.4414006618542327e-05
+    # works as expected, finds the only root in range
+    
+    # 2 b
+    f = lambda x: (x-1)**2 * (x-3) 
+    a = 0
+    b = 2
+    #returns 
+#     the approximate root is 0
+    # the error message reads: 1
+    # f(astar) = -3
+    # this occurs because the root has multiplicity 2 > 1, so there is no change in sign
+    
+    # 2 c i
+    f = lambda x: np.sin(x)
+    # a = 0
+    # b = .1
+    # with these a and b it returns 0 for all values. This makes sense
+    
+    # 2 c ii
+    a = 0.5
+    b = 0.75 * np.pi
+    # the approximate root is 0.5
+    # the error message reads: 1
+    # f(astar) = 0.479425538604203
+
+# Yes, this code was expected given the 
 
     [astar,ier] = bisection(f,a,b,tol)
     print('the approximate root is',astar)
