@@ -24,7 +24,6 @@ for i in range(1,15):
     value += x**i / math.factorial(i)
     # print(f"On the addition of the {i}th term, the result was {value}")
     # print(value - 10**-9)
-# took two terms! Result was x + x**2/2
 print(x + x**2/2) # outputs 10^-9
 
 
