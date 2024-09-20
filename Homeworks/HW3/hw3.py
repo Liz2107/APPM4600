@@ -9,8 +9,10 @@ def driver():
     q5b()
     
 def q5b():
+    # f = lambda x: -np.sin(2*x) + 5*x/4 - 3/4
+    # x0 = 1.5
     f = lambda x: -np.sin(2*x) + 5*x/4 - 3/4
-    x0 = 1.5
+    x0 = 3
     Nmax = 1000
     tol = 1e-10
     
