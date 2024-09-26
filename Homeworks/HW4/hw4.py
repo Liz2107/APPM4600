@@ -5,12 +5,24 @@ import matplotlib.pyplot as plt
 def driver():
     # q1a()
     # q1b()
+    q1c()
     # q4i()
     # q4iii()
     # q4ii()
     # q4_like_2c()
-    q5()
+    # q5()
     
+def q1c():
+    x0 = 10
+    tol = 1e-10
+    T = lambda x: 35 * sp.special.erf(x / 1.69161697792) - 15
+    Tp = lambda x: 70 * np.exp(-(x / 1.69161697792)**2) / np.sqrt(np.pi)
+    [astar,ier, iters, count] = newton(T, Tp, x0, tol, 500)
+    print('the approximate root is',astar)
+    print('the error message reads:',ier)
+    print('f(astar) =', T(astar))
+    print(f'took {count} iterations')
+        
 def q4_like_2c():
     print(x)
     
@@ -48,6 +60,7 @@ def q5():
     plt.xscale("log")
     plt.yscale("log")
     # plt.legend()
+    
     plt.xlabel("x_{k+1}")
     plt.ylabel("x_k")
     plt.title("Newton's method Logarithmic Convergence Visualizaiton")
