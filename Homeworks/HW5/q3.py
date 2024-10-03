@@ -90,7 +90,7 @@ def compute_order(x, xstar):
     _lambda = np.exp(fit[1])
     alpha = fit[0]
     print(f"lambda: {_lambda}")
-    # print(f"alpha: {alpha}")
+    print(f"alpha: {alpha}")
     return fit       
 
        
