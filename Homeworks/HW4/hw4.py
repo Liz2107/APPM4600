@@ -1,19 +1,75 @@
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
+from sympy import symbols, diff
 
 def driver():
     # q1a()
     # q1b()
-    q1c()
+    # q1c()
     # q4i()
     # q4iii()
     # q4ii()
     # q4_like_2c()
-    # q5()
+    q5()
+    # q4()
+    
+def compute_order(x, xstar):
+    diff1 = np.abs(x[1::]-xstar)
+    diff2 = np.abs(x[0:-1]-xstar)
+
+    fit = np.polyfit(np.log(diff2.flatten()),np.log(diff1.flatten()),1)
+    
+    _lambda = np.exp(fit[1])
+    alpha = fit[0]
+    print(f"lambda: {_lambda}")
+    # print(f"alpha: {alpha}")
+    return fit
+
+def q4():
+    f = lambda x: np.exp(3*x) - 27*x**6 + 27*x**4*np.exp(x) - 9*x**2*np.exp(2*x)
+    fp = lambda x: 3 * np.exp(3*x) - 6*27*x**5 + 27*x**4*np.exp(x) + 4 * 27 * x**3 * np.exp(x) - 18 * x**2 * np.exp(2*x) - 18 * x * np.exp(2*x)
+    # fpp = lambda x: 9 * np.exp(3 * x) - - 30 * 27 * x**4 + 27*4*x**3*np.exp(x) + 27*x**4*np.exp(x) + 12 *27*x**2*np.exp(x) + 4 * 27 * x**3 * np.exp(x) -36 *x * np.exp(2*x) - 36 *x**2 * np.exp(2*x) - 18 * np.exp(2 * x) - 36 * x * np.exp(2 * x)
+    fpp = lambda x: 9*np.exp(3*x) + (-36*x**2 - 72*x-18)*np.exp(2*x) + (27*x**4 + 216*x**3 + 324 * x**2)*np.exp(x) - 810*x**4
+    # ((27x4+216x3+324x2)ex−810x4
+
+
+
+    
+    x0 = 3.8
+    tol = 1e-10
+    Nmax = 500
+    
+    print("normal newton")
+    (p,pstar,info,it) = newtoni(f,fp,x0,tol, Nmax)
+    print('the approximate root is', '%16.16e' % pstar)
+    print('the error message reads:', '%d' % info)
+    print('Number of iterations:', '%d' % it)
+    
+    compute_order(p, pstar)
+    
+    
+    print("mult by m newton")
+    (p,pstar,info,it) = newtonii(f,fp,x0,tol, Nmax)
+    print('the approximate root is', '%16.16e' % pstar)
+    print('the error message reads:', '%d' % info)
+    print('Number of iterations:', '%d' % it)
+    
+    compute_order(p, pstar)
+    
+    print("only derivatives newton")
+    h = lambda x: f(x) / fp(x)
+    hp = lambda x: 1 - f(x)*fpp(x) / fp(x)**2
+    (p,pstar,info,it) = newtoni(h,hp,x0,tol, Nmax)
+    print('the approximate root is', '%16.16e' % pstar)
+    print('the error message reads:', '%d' % info)
+    print('Number of iterations:', '%d' % it)
+    
+    
+    compute_order(p, pstar)    
     
 def q1c():
-    x0 = 10
+    x0 = 0.01
     tol = 1e-10
     T = lambda x: 35 * sp.special.erf(x / 1.69161697792) - 15
     Tp = lambda x: 70 * np.exp(-(x / 1.69161697792)**2) / np.sqrt(np.pi)
@@ -34,16 +90,23 @@ def q5():
     Nmax = 500
     tol = 1e-10
     
-    [astar,ier, count, iters] = newton(f, fp, x0, tol, Nmax)
-    # [astar, ier, count, iters] = secant(f, x0, x1, tol, Nmax)
-    print('the approximate root is',astar)
-    print('the error message reads:',ier)
-    print('f(astar) =', f(astar))
-    print(f'took {count} iterations')
+    # [astar,ier, count, iters] = newton(f, fp, x0, tol, Nmax)
+    [astar, ier, count, iters] = secant(f, x0, x1, tol, Nmax)
+    # print('the approximate root is',astar)
+    # print('the error message reads:',ier)
+    # print('f(astar) =', f(astar))
+    # print(f'took {count} iterations')
+    # (iters,astar,info,it) = newtoni(f,fp,x0,tol, Nmax)
+    # print('the approximate root is', '%16.16e' % astar)
+    # print('the error message reads:', '%d' % info)
+    # print('Number of iterations:', '%d' % it)
+    print(iters)
+    compute_order(np.array(iters), astar)
     
     errs = []
     for i in iters:
         errs.append(np.abs(i - astar))
+    print(len(iters))
     print(errs)
     
     iters = np.array(iters)
@@ -64,22 +127,23 @@ def q5():
     plt.xlabel("x_{k+1}")
     plt.ylabel("x_k")
     plt.title("Newton's method Logarithmic Convergence Visualizaiton")
-    plt.show()    
+    # plt.show()    
     
 
 def q4ii():
-    f = lambda x: np.exp(3*x) - 27*x**6 + 27*x**4*np.exp(x) - 9*x**2*np.exp(2*x)
-    fp = lambda x: 3 * np.exp(3*x) - 6*27*x**5 + 27*x**4*np.exp(x) + 4 * 27 * x**3 * np.exp(x) - 18 * x**2 * np.exp(2*x) - 18 * x * np.exp(2*x)
-    fpp = lambda x: 9 * np.exp(3 * x) - - 30 * 27 * x**4 + 27*4*x**3*np.exp(x) + 27*x**4*np.exp(x) + 12 *27*x**2*np.exp(x) + 4 * 27 * x**3 * np.exp(x) -36 *x * np.exp(2*x) - 36 *x**2 * np.exp(2*x) - 18 * np.exp(2 * x) - 36 * x * np.exp(2 * x)
+    # f = lambda x: np.exp(3*x) - 27*x**6 + 27*x**4*np.exp(x) - 9*x**2*np.exp(2*x)
+    # fp = lambda x: 3 * np.exp(3*x) - 6*27*x**5 + 27*x**4*np.exp(x) + 4 * 27 * x**3 * np.exp(x) - 18 * x**2 * np.exp(2*x) - 18 * x * np.exp(2*x)
+    # fpp = lambda x: 9 * np.exp(3 * x) - - 30 * 27 * x**4 + 27*4*x**3*np.exp(x) + 27*x**4*np.exp(x) + 12 *27*x**2*np.exp(x) + 4 * 27 * x**3 * np.exp(x) -36 *x * np.exp(2*x) - 36 *x**2 * np.exp(2*x) - 18 * np.exp(2 * x) - 36 * x * np.exp(2 * x)
 
 # set m = 3 (highest mult)
-    g = lambda x: x - 3 * f(x) / fp(x)
-    gp = lambda x: 6 *f(x) * fpp(x) / fp(x)**2
+    f = lambda x: np.exp(3*x) - 27*x**6 + 27*x**4*np.exp(x) - 9*x**2*np.exp(2*x)
+    fp = lambda x: 3 * np.exp(3*x) - 6*27*x**5 + 27*x**4*np.exp(x) + 4 * 27 * x**3 * np.exp(x) - 18 * x**2 * np.exp(2*x) - 18 * x * np.exp(2*x)
+    
     x0 = 4
     tol = 1e-10
     Nmax = 500
     
-    [astar,ier, count, iters] = newton(g, gp, x0, tol, Nmax)
+    [astar,ier, count, iters] = newton(f, fp, x0, tol, Nmax)
     print('the approximate root is',astar)
     print('the error message reads:',ier)
     print('f(astar) =', f(astar))
@@ -90,15 +154,11 @@ def q4iii():
     f = lambda x: np.exp(3*x) - 27*x**6 + 27*x**4*np.exp(x) - 9*x**2*np.exp(2*x)
     fp = lambda x: 3 * np.exp(3*x) - 6*27*x**5 + 27*x**4*np.exp(x) + 4 * 27 * x**3 * np.exp(x) - 18 * x**2 * np.exp(2*x) - 18 * x * np.exp(2*x)
     
-    g = lambda x: f(x) / fp(x)
-    fpp = lambda x: 9 * np.exp(3 * x) - - 30 * 27 * x**4 + 27*4*x**3*np.exp(x) + 27*x**4*np.exp(x) + 12 *27*x**2*np.exp(x) + 4 * 27 * x**3 * np.exp(x) -36 *x * np.exp(2*x) - 36 *x**2 * np.exp(2*x) - 18 * np.exp(2 * x) - 36 * x * np.exp(2 * x)
-    gp = lambda x: 1 - f(x) * fpp(x) / fp(x)**2
-    
     x0 = 4
     tol = 1e-10
     Nmax = 500
     
-    [astar,ier, count, iters] = newton(g, gp, x0, tol, Nmax)
+    [astar,ier, count, iters] = newton(f, fp, x0, tol, Nmax)
     print('the approximate root is',astar)
     print('the error message reads:',ier)
     print('f(astar) =', f(astar))
@@ -243,4 +303,56 @@ def bisection(f,a,b,tol):
     astar = d
     ier = 0
     return [astar, ier, count]
+
+
+
+
+
+def newtoni(f,fp,p0,tol,Nmax):
+    # p=[p0]
+    p = []
+    # p[0] = p0
+    for it in range(Nmax):
+        p1 = p0-f(p0)/fp(p0)
+        p.append(p0)
+        if (abs(p1-p0) < tol):
+            pstar = p1
+            info = 0
+            return [p,pstar,info,it]
+        p0 = p1
+    pstar = p1
+    info = 1
+    return [p,pstar,info,it]
+
+def newtonii(f,fp,p0,tol,Nmax):
+    p = np.zeros(Nmax+1)
+    p[0] = p0
+    for it in range(Nmax):
+        p1 = p0-3 * f(p0)/fp(p0)
+        p[it+1] = p1
+        if (abs(p1-p0) < tol):
+            pstar = p1
+            info = 0
+            return [p,pstar,info,it]
+        p0 = p1
+    pstar = p1
+    info = 1
+    return [p,pstar,info,it]
+
+def newtoniii(f,fp,p0,tol,Nmax):
+    p = np.zeros(Nmax+1)
+    p[0] = p0
+    for it in range(Nmax):
+        p1 = f(p0)/fp(p0)
+        p[it+1] = p1
+        if (abs(p1-p0) < tol):
+            pstar = p1
+            info = 0
+            return [p,pstar,info,it]
+        p0 = p1
+    pstar = p1
+    info = 1
+    return [p,pstar,info,it]
+
+
 driver()
