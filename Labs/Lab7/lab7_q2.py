@@ -20,13 +20,11 @@ def prelab():
 
     f = lambda x: 1 / (1 + (10*x)**2)
     
-    N = 20
+    N = 10
     a = -1
     b = 1
     
-    h = 2 / (N-1)
-    x_ = lambda j: -1 + h*(j-1)
-    xint = np.linspace(a,b,N+1)
+    xint = np.array([np.cos(np.pi * (2*j - 1)/2*N) for j in range(N)])
     # xint = np.array([-1 + h*(j-1) for j in range(N)])
     print('xint =',xint)
     yint = f(xint)
@@ -87,17 +85,18 @@ def driver():
 
     f = lambda x: 1 / (1 + (10*x)**2)
 
-    N = 20
+    N = 10
     ''' interval'''
     a = -1
     b = 1
    
    
     ''' create equispaced interpolation nodes'''
-    h = 2 / (N-1)
-    x_ = lambda j: -1 + h*(j-1)
-    xint = np.linspace(a,b,N+1)
+    # h = 2 / (N-1)
+    # x_ = lambda j: -1 + h*(j-1)
+    # xint = np.linspace(a,b,N+1)
     
+    xint = np.array([np.cos(np.pi * (2*j - 1)/2*N) for j in range(N-1)])
     ''' create interpolation data'''
     yint = f(xint)
     
