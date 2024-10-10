@@ -67,7 +67,7 @@ def evalF(x):
        
 def evalJ(x):
     J = np.array([[6*x[0], -2 * x[1]],
-    [3*x[0]**2 - 3* x[1]**2, 6*x[0]*x[1]]])
+    [-3*x[0]**2 + 3* x[1]**2, 6*x[0]*x[1]]])
     return J      
        
 def compute_order(x, xstar):
@@ -79,7 +79,7 @@ def compute_order(x, xstar):
     _lambda = np.exp(fit[1])
     alpha = fit[0]
     print(f"lambda: {_lambda}")
-    # print(f"alpha: {alpha}")
+    print(f"alpha: {alpha}")
     return fit       
 
        
