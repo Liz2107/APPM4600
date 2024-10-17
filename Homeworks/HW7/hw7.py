@@ -16,16 +16,15 @@ from numpy.linalg import inv
 from numpy.linalg import norm
 
 #Pre-lab code
-def prelab(): 
+def q1b(): 
 
     f = lambda x: 1 / (1 + (10*x)**2)
     
-    N = 10
+    N = 15
     a = -1
     b = 1
     
-    xint = np.array([np.cos(np.pi * (2*j - 1)/2*N) for j in range(N)])
-    # xint = np.array([-1 + h*(j-1) for j in range(N)])
+    xint = np.linspace(a,b,N+1)
     print('xint =',xint)
     yint = f(xint)
     print('yint =',yint)
@@ -46,10 +45,13 @@ def prelab():
     yex = f(xeval)
 
     err =  norm(yex-yeval) 
-    print('err = ', err)
+    # print('err = ', err)
     
     plt.plot(xeval, yeval, label="Interp")
-    plt.plot(xeval, np.abs(yex-yeval), label="Absolute Error")
+    plt.scatter(xint, f(xint), label= "Evaluated Data Points", color="green")
+    plt.plot(xeval, yex, label="Actual Function")
+    
+    # plt.plot(xeval, np.abs(yex-yeval), label="Absolute Error")
     plt.legend()
     plt.show()
     return
@@ -78,25 +80,32 @@ def Vandermonde(xint,N):
            V[j][i] = xint[j]**i
 
     return V     
-# prelab()
+# q1b()
+
+def make_nodes(N):
+    a = []
+    for i in range(N+1):
+        a.append(np.cos(np.pi * (2*i+1) / (2*N)))
+    return np.array(a)
 
 def driver():
 
 
     f = lambda x: 1 / (1 + (10*x)**2)
 
-    N = 10
+    N = 20
     ''' interval'''
     a = -1
     b = 1
    
    
     ''' create equispaced interpolation nodes'''
-    # h = 2 / (N-1)
-    # x_ = lambda j: -1 + h*(j-1)
-    # xint = np.linspace(a,b,N+1)
-    
-    xint = np.array([np.cos(np.pi * (2*j - 1)/2*N) for j in range(N-1)])
+    # a = np.array([((2*j - 1) / 2*N) for j in range(1, N+1)])
+    # print(np.cos(a*np.pi))
+    # xint = np.array([1 + np.cos(np.pi * (2*j - 1)/2*N) for j in range(1,N+1)])
+    # # print(xint)
+    # print(a)
+    xint = make_nodes(N)
     print(xint)
     ''' create interpolation data'''
     yint = f(xint)
@@ -114,11 +123,12 @@ def driver():
     for j in range(N+1):
        y[j][0]  = yint[j]
 
-    y = dividedDiffTable(xint, y, N+1)
+    # y = dividedDiffTable(xint, y, N+1)
     ''' evaluate lagrange poly '''
     for kk in range(Neval+1):
-       yeval_l[kk] = eval_lagrange(xeval[kk],xint,yint,N)
-       yeval_dd[kk] = evalDDpoly(xeval[kk],xint,y,N)
+       yeval_dd[kk] = eval_lagrange(xeval[kk],xint,yint,N)
+    #    yeval_dd[kk] = bary(xeval[kk],xint,yint,N)
+    #    yeval_dd[kk] = evalDDpoly(xeval[kk],xint,y,N)
           
 
     
@@ -130,19 +140,41 @@ def driver():
    
     plt.figure()    
     plt.title("Evals")
-    plt.plot(xeval,fex,'ro-')
-    plt.plot(xeval,yeval_l,'bs--') 
-    plt.plot(xeval,yeval_dd,'c.--')
+    plt.plot(xeval,fex,'ro-', label='f(x)')
+    # plt.plot(xeval,yeval_l,'bs--') 
+    plt.plot(xeval,yeval_dd,'c.--', label="Barycentric Lagrange")
     plt.legend()
 
     plt.figure() 
     plt.title("Error")
     err_l = abs(yeval_l-fex)
     err_dd = abs(yeval_dd-fex)
-    plt.semilogy(xeval,err_l,'ro--',label='lagrange')
-    plt.semilogy(xeval,err_dd,'bs--',label='Newton DD')
+    # plt.semilogy(xeval,err_l,'ro--',label='lagrange')
+    plt.semilogy(xeval,err_dd,'bs--')
     plt.legend()
     plt.show()
+
+
+
+def bary(xeval, xint, yint, N):
+    wj = np.ones(N+1)
+    
+    for count in range(N+1):
+        for j in range(N+1):
+            if count != j:
+                wj[count] = wj[count]/(xint[count]-xint[j])
+    
+    #eval
+    lx = 1
+    yeval = 0
+    for i in range(N+1):
+        # //eval l 
+        lx *= (xeval - xint[i])
+        
+        # do formula
+        yeval += yint[i]*wj[i] / (xeval - xint[i])
+    
+    return yeval * lx
 
 def eval_lagrange(xeval,xint,yint,N):
 
@@ -186,6 +218,10 @@ def evalDDpoly(xval, xint,y,N):
 
     return yeval
 
-       
+
 
 driver()        
+# print(a)
+# # print(np.cos(a*np.pi))
+# xint = np.array([1 + np.cos(np.pi * (2*j - 1)/2*N) for j in range(1,N+1)])
+# print(xint)
