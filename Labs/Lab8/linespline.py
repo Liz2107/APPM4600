@@ -6,8 +6,8 @@ from numpy.linalg import inv
 
 def driver():
     
-    f = lambda x: math.exp(x)
-    a = 0
+    f = lambda x: 1 / (1 + 100*x**2)#math.exp(x)
+    a = -1
     b = 1
     
     ''' create points you want to evaluate at'''
@@ -15,7 +15,7 @@ def driver():
     xeval =  np.linspace(a,b,Neval)
     
     ''' number of intervals'''
-    Nint = 2
+    Nint = 20
     
     '''evaluate the linear spline'''
     yeval = eval_lin_spline(xeval,Neval,a,b,f,Nint)

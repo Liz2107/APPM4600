@@ -36,7 +36,7 @@ def driver():
     plt.figure()    
     plt.plot(xeval,fex,'ro-',label='exact function')
     plt.plot(xeval,yeval,'bs--',label='natural spline') 
-    plt.legend
+    plt.legend()
     plt.show()
      
     err = abs(yeval-fex)
@@ -50,27 +50,38 @@ def create_natural_spline(yint,xint,N):
 #    create the right  hand side for the linear system
     b = np.zeros(N+1)
 #  vector values
-    h = np.zeros(N+1)
-    h[0] = xint[i]-xint[i-1]  
+    h = np.diff(xint)
     for i in range(1,N):
-       h[i] = xint[i+1] - xint[i]
+    #    h[i] = xint[i+1] - xint[i]
        b[i] = (yint[i+1]-yint[i])/h[i] - (yint[i]-yint[i-1])/h[i-1]
 
 #  create the matrix A so you can solve for the M values
     A = np.zeros((N+1,N+1))
+    row_count = 0
+    for row in A:
+        if row_count == 0:
+            row[0] = 1
+        elif row_count == N:
+            row[N] = 1
+        else:
+            row[row_count - 1] = h[row_count-1] / 6
+            row[row_count] = (h[row_count] + h[row_count -1]) / 3
+            row[row_count + 1] = h[row_count] / 6
+        row_count += 1
 
 #  Invert A    
-    Ainv = 
+    # Ainv = inv(A)
 
 # solver for M    
-    M  = 
+
+    M  = np.linalg.solve(A, b)
     
 #  Create the linear coefficients
     C = np.zeros(N)
     D = np.zeros(N)
     for j in range(N):
-       C[j] = # find the C coefficients
-       D[j] = # find the D coefficients
+       C[j] = yint[j] / h[j] - h[j] * M[j] / 6
+       D[j] = yint[j+1] / h[j] - h[j] * M[j+1] / 6
     return(M,C,D)
        
 def eval_local_spline(xeval,xi,xip,Mi,Mip,C,D):
@@ -80,7 +91,8 @@ def eval_local_spline(xeval,xi,xip,Mi,Mip,C,D):
 
     hi = xip-xi
    
-    yeval = 
+    yeval = ((xip - xeval)**3 * Mi) / (6*hi) + (xeval - xi)**3*Mip / 6*hi + C*(xip - xeval) + D*(xeval - xi)
+    print("xi", yeval[0], "xip", yeval[-1])
     return yeval 
     
     
