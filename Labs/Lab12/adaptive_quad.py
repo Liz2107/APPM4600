@@ -16,8 +16,9 @@ def eval_composite_trap(M,a,b,f):
     I_trap = h*f(xnode[0])*1/2
     for j in range(1,n):
         I_trap = I_trap+h*f(xnode[j])
+        # print("here")
     I_trap= I_trap + 1/2*h*f(xnode[n])
-    return I_trap
+    return I_trap, xnode, 0
 
 def eval_composite_simpsons(M,a,b,f):
     """
@@ -34,9 +35,10 @@ def eval_composite_simpsons(M,a,b,f):
         I_simp = I_simp+2*f(xnode[2*j])
         # odd part
         I_simp = I_simp +4*f(xnode[2*j-1])
+        # print("here")
     I_simp= I_simp + f(xnode[n])
     I_simp = h/3*I_simp
-    return I_simp
+    return I_simp, xnode, 0
         
     
 def eval_gauss_quad(M,a,b,f):
@@ -77,6 +79,7 @@ def adaptive_quad(a,b,f,tol,M,method):
     left_p[0] = a; right_p[0] = b
     # initial approx and grid
     s[0],x,_ = method(M,a,b,f)
+    print(s[0])
     # save grid
     X = []
     X.append(x)
@@ -87,7 +90,7 @@ def adaptive_quad(a,b,f,tol,M,method):
         # get midpoint to split interval into left and right
         c = 0.5*(left_p[j-1]+right_p[j-1])
         # compute integral on left and right spilt intervals
-        s1,x,_ = method(M,left_p[j-1],c,f); X.append(x)
+        s1,x,_ = method(M,left_p[j-1],c,f); X.append(x)        
         s2,x,_ = method(M,c,right_p[j-1],f); X.append(x)
         if np.max(np.abs(s1+s2-s[j-1])) > tol:
             left_p[j] = left_p[j-1]

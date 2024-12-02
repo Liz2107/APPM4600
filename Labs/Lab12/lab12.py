@@ -7,24 +7,26 @@ import matplotlib.pyplot as plt
 import numpy as np
 # specify the quadrature method
 # (eval_gauss_quad, eval_composite_trap, eval_composite_simpsons)
-method = eval_gauss_quad
+method = eval_composite_trap
 # interval of integration [a,b]
 a = 0.; b = 1.
 # function to integrate and true values
 # TRYME: uncomment and comment to try different funcs
 # make sure to adjust I_true values if using different interval!
-f = lambda x: np.log(x)**2; I_true = 2; labl = '$\log^2(x)$'
+# f = lambda x: np.log(x)**2; I_true = 2; labl = '$\log^2(x)$'
 #f = lambda x: 1./(np.power(x,(1./5.))); I_true = 5./4.; labl = '$\\frac{1}{x^{1/5}}$'
 #f = lambda x: np.exp(np.cos(x)); I_true = 2.3415748417130531; labl = '$\exp(\cos(x))$'
-#f = lambda x: x**20; I_true = 1./21.; labl = '$x^{20}$'
-# below is for a=0.1, b = 2
-#f = lambda x: np.sin(1./x); I_true = 1.1455808341; labl = '$\sin(1/x)$'
+# f = lambda x: x**20; I_true = 1./21.; labl = '$x^{20}$'
+a = 0
+b = 2
+# f = lambda x: np.sin(1/x); I_true = 1.1455808341; labl = '$\sin(1/x)$'
+f = lambda x: x**2; I_true = 4/3; labl = 'x'
 # absolute tolerance for adaptive quad
 tol = 1e-14
 # machine eps in numpy
 eps = np.finfo(float).eps
 # number of nodes and weights, per subinterval
-Ms = np.arange(2,15); nM = len(Ms)
+Ms = np.arange(2,5); nM = len(Ms)
 # storage for error
 err_old = np.zeros((nM,))
 err_new = np.zeros((nM,))
